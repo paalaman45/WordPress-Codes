@@ -1,0 +1,9 @@
+<?php
+  //This Code is to Customize the Invoice PDF Fields from the WooCommerce
+  
+  //Order ID
+  $post_id = $this->order_number(); // Replace with the actual post ID
+  
+  //Post Meta Fields
+  $meta = get_post_meta( $order_id, '_billing_selected_designer', true );
+?>
