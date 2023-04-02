@@ -1,0 +1,99 @@
+<?php
+/**
+ * Customer processing order email
+ *
+ * This template can be overridden by copying it to yourtheme/woocommerce/emails/customer-processing-order.php.
+ *
+ * HOWEVER, on occasion WooCommerce will need to update template files and you
+ * (the theme developer) will need to copy the new files to your theme to
+ * maintain compatibility. We try to do this as little as possible, but it does
+ * happen. When this occurs the version of the template file will be bumped and
+ * the readme will list any important changes.
+ *
+ * @see https://docs.woocommerce.com/document/template-structure/
+ * @package WooCommerce\Templates\Emails
+ * @version 3.7.0
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/*
+ * @hooked WC_Emails::email_header() Output the email header
+ */
+//Custom Header
+echo '<div style="background-color: #2e2e2e; padding: 15px 20px; display: flex !important; justify-content: space-between !important; width: 40% !important; margin: 20px auto !important;align-items: center;">';
+	echo '<a href="www.intermax.com.au" style="display: flex;align-items: center;"><img src="www.intermax.com.au/wp-content/uploads/2023/02/intermax-logo-white.png" height="50" style="height:47px;"></a>';
+	echo '<h3 style="color:white;margin-left:42%;font-size: 18px;">Order #'.$order->get_order_number().'</h3>';
+echo '</div>';
+echo '<div style="width:40% !important; margin:0 auto;background-color:white;padding:15px 20px;">';
+		echo '<h2 style="text-align:center; color: #8dc73f">Thank you for Ordering!</h2>';
+		echo '<p style="text-align:left;">Hi '.$order->get_billing_first_name().'</p>';
+		echo "<p style='text-align:left;'>Just to let you know- We've recieved your order #".$order->get_order_number().", and it's now being processed.</p>";
+		echo '<h2 style="text-align:left; color: #8dc73f">'.$order->get_date_created()->format('M j, Y').'</h2>';
+
+		echo '<div style="background-color:#f5f5f5;padding:30px;border-radius:15px">';
+			echo '<table style="width:100%;">';
+				echo '<thead><tr style="text-align:left;font-size:16px;">';
+					echo '<th colspan="2">YOUR ORDER</th>';
+					echo '<th>QTY</th>';
+					echo '<th>PRICE</th>';
+				echo '</tr></thead>';
+				echo '<tbody>';
+					$order = wc_get_order( $order->get_order_number() );
+					$items = $order->get_items();
+					foreach($items as $item){
+						$product_id = $item->get_product_id();
+        				$product = wc_get_product( $product_id );
+						$image_id = $product->get_image_id();
+        				$image_url = wp_get_attachment_image_url( $image_id, 'thumbnail' );
+
+						$qty = $item->get_quantity();
+						$price = $item->get_total() / $qty;
+						$total = $item->get_total();
+						echo '<tr style="font-size:16px">';
+							echo '<td style="background-color:white; width:50px; padding:10px; text-align:center;"><img height="50px" width="50px" src="'.$image_url.'" alt="'.$product->get_name().'" /></td>';
+							echo '<td style="text-align:left;">'.$product->get_name().'</td>';
+							echo '<td>'.$qty.'</td>';
+							echo '<td>'.$total.'</td>';
+						echo '</tr>';
+					}
+				echo '</tbody>';
+			echo '</table>';
+		echo '</div>';
+echo '</div>'
+//do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
+
+<?php
+
+/*
+ * @hooked WC_Emails::order_details() Shows the order details table.
+ * @hooked WC_Structured_Data::generate_order_data() Generates structured data.
+ * @hooked WC_Structured_Data::output_structured_data() Outputs structured data.
+ * @since 2.5.0
+ */
+//do_action( 'woocommerce_email_order_details', $order, $sent_to_admin, $plain_text, $email );
+
+/*
+ * @hooked WC_Emails::order_meta() Shows order meta data.
+ */
+//do_action( 'woocommerce_email_order_meta', $order, $sent_to_admin, $plain_text, $email );
+
+/*
+ * @hooked WC_Emails::customer_details() Shows customer details
+ * @hooked WC_Emails::email_address() Shows email address
+ */
+//do_action( 'woocommerce_email_customer_details', $order, $sent_to_admin, $plain_text, $email );
+
+/**
+ * Show user-defined additional content - this is set in each email's settings.
+ */
+if ( $additional_content ) {
+	echo wp_kses_post( wpautop( wptexturize( $additional_content ) ) );
+}
+
+/*
+ * @hooked WC_Emails::email_footer() Output the email footer
+ */
+//do_action( 'woocommerce_email_footer', $email );
